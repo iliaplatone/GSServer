@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +8,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Linq;
-using GS.Server.Helpers;
+using ASCOM.DeviceInterface;
+using GS.Server.SkyTelescope;
 using GS.Shared.Domain;
 
 namespace GS.Server.Alignment
@@ -103,7 +104,7 @@ namespace GS.Server.Alignment
         #region variables ...
         private readonly List<string> _exceptionMessages = new List<string>();
 
-        private bool _threeStarEnabled = false;
+        private bool _threeStarEnabled;
         #endregion
 
         #region Properties ...
@@ -121,7 +122,7 @@ namespace GS.Server.Alignment
             get => _proximityLimit;
             set
             {
-                if (_proximityLimit == value) return;
+                if (Math.Abs(_proximityLimit - value) < 0.000001) return;
                 _proximityLimit = value;
             }
         }
@@ -212,7 +213,20 @@ namespace GS.Server.Alignment
         /// GSS uses the axis positions of 90 and 90 for home. This constant represents 90 on the
         /// linear scale the same as in EQMOD.
         /// </summary>
-        public long[] ScaleCenter { get; } = {9003008, 9003008};
+        public long[] ScaleCenter
+        {
+            get
+            {
+                if (SkySettings.AlignmentMode == AlignmentModes.algAltAz)
+                {
+                    return new long[] { 0, 0 };
+                }
+                else
+                {
+                    return new long[] { 9003008, 9003008 };
+                }
+            }
+        }
 
         private ActivePointsEnum _activePoints;
         public ActivePointsEnum ActivePoints
@@ -242,7 +256,7 @@ namespace GS.Server.Alignment
                 }
                 else
                 {
-                    return new double[] { 0d, 0d };
+                    return new double[] { 1.0e-6d / 3600, 1.0e-6d / 3600 }; // allow for get sync/unsync rounding
                 }
             }
         }
@@ -408,7 +422,7 @@ namespace GS.Server.Alignment
             foreach (AlignmentPoint ap in this.AlignmentPoints)
             {
                 sb.AppendLine(
-                    $"[DataRow({ap.Id}, {ap.Unsynced.RA}, {ap.Unsynced.Dec}, {ap.UnsyncedCartesian.x}, {ap.UnsyncedCartesian.y}, {ap.Synced.RA}, {ap.Synced.Dec}, {ap.SyncedCartesian.x}, {ap.SyncedCartesian.y}, \"{ap.AlignTime.ToString("O")}\")]");
+                    $"[DataRow({ap.Id}, {ap.Unsynced.RA}, {ap.Unsynced.Dec}, {ap.UnsyncedCartesian.x}, {ap.UnsyncedCartesian.y}, {ap.Synced.RA}, {ap.Synced.Dec}, {ap.SyncedCartesian.x}, {ap.SyncedCartesian.y}, \"{ap.AlignTime:O}\")]");
             }
             File.WriteAllText(filename, sb.ToString());
         }
@@ -474,16 +488,16 @@ namespace GS.Server.Alignment
 
 
         #region Access time related ...
-        private void WriteLastAccessTime()
-        {
-            LastAccessDateTime = DateTime.Now;
-            var dir = Path.GetDirectoryName(_timeStampFile);
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-            File.WriteAllText(_timeStampFile, JsonConvert.SerializeObject(LastAccessDateTime, Formatting.Indented));
-        }
+        //private void WriteLastAccessTime()
+        //{
+        //    LastAccessDateTime = DateTime.Now;
+        //    var dir = Path.GetDirectoryName(_timeStampFile);
+        //    if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+        //    {
+        //        Directory.CreateDirectory(dir);
+        //    }
+        //    File.WriteAllText(_timeStampFile, JsonConvert.SerializeObject(LastAccessDateTime, Formatting.Indented));
+        //}
 
         private void ReadLastAccessTime()
         {

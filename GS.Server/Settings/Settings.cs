@@ -1,4 +1,4 @@
-﻿/* Copyright(C) 2019-2022 Rob Morgan (robert.morgan.e@gmail.com)
+/* Copyright(C) 2019-2022 Rob Morgan (robert.morgan.e@gmail.com)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
@@ -188,6 +188,21 @@ namespace GS.Server.Settings
                 if (_model3d == value) return;
                 _model3d = value;
                 Properties.Server.Default.Model3D = value;
+                LogSetting(MethodBase.GetCurrentMethod()?.Name, $"{value}");
+                OnStaticPropertyChanged();
+            }
+        }
+
+        private static int _modelIntFactor;
+        public static int ModelIntFactor
+        {
+            get => _modelIntFactor;
+            set
+            {
+                if (value < 1 || value > 20) { return; }
+                if (_modelIntFactor == value) { return; }
+                _modelIntFactor = value;
+                Properties.Server.Default.ModelIntFactor = value;
                 LogSetting(MethodBase.GetCurrentMethod()?.Name, $"{value}");
                 OnStaticPropertyChanged();
             }
@@ -558,6 +573,20 @@ namespace GS.Server.Settings
             }
         }
 
+        private static double _yAxisCentre;
+        public static double YAxisCentre
+        {
+            get => _yAxisCentre;
+            set
+            {
+                if (Math.Abs(_yAxisCentre - value) < 0.1) return;
+                _yAxisCentre = value;
+                Properties.Server.Default.YAxisCentre = value;
+                // LogSetting(MethodBase.GetCurrentMethod()?.Name, $"{value}");
+                OnStaticPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Methods      
@@ -579,6 +608,7 @@ namespace GS.Server.Settings
             Notes = Properties.Server.Default.Notes;
             SkyWatcher = Properties.Server.Default.SkyWatcher;
             Model3D = Properties.Server.Default.Model3D;
+            ModelIntFactor = Properties.Server.Default.ModelIntFactor;
             ModelLookDirection1 = Vector3D.Parse(Properties.Server.Default.ModelLookDirection1);
             ModelPosition1 = Point3D.Parse(Properties.Server.Default.ModelPosition1);
             ModelUpDirection1 = Vector3D.Parse(Properties.Server.Default.ModelUpDirection1);
@@ -606,6 +636,7 @@ namespace GS.Server.Settings
             WindowLeft = Properties.Server.Default.WindowLeft;
             WindowTop = Properties.Server.Default.WindowTop;
             AlignmentTabVisible = Properties.Server.Default.AlignmentTabVisible;
+            YAxisCentre = Properties.Server.Default.YAxisCentre;
 
             Enum.TryParse<Model3DType>(Properties.Server.Default.ModelType, true, out var aparse);
             ModelType = aparse;

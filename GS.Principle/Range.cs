@@ -14,6 +14,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+
 namespace GS.Principles
 {
     /// <summary>
@@ -109,6 +111,7 @@ namespace GS.Principles
                 if (d < 0.0) d += 360.0;
                 if (d >= 360.0) d -= 360.0;
             }
+            if (Math.Abs(d - 360.0) < 0.000001) d = 0.0;
             return d;
         }
 
@@ -152,7 +155,7 @@ namespace GS.Principles
         /// </summary>
         /// <param name="axes"></param>
         /// <returns></returns>
-        public static double[] RangeAxesXY(double[] axes)
+        public static double[] RangeAxesXy(double[] axes)
         {
             double[] xy = { Range360(axes[0]), Range270(axes[1]) };
             return xy;
@@ -163,7 +166,7 @@ namespace GS.Principles
         /// </summary>
         /// <param name="axes"></param>
         /// <returns></returns>
-        public static double[] RangeAxesYX(double[] axes)
+        public static double[] RangeAxesYx(double[] axes)
         {
             double[] xy = { Range270(axes[1]), Range360(axes[0]) };
             return xy;

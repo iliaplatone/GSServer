@@ -27,13 +27,13 @@ namespace GS.Server.Gps
 {
     internal class GpsHardware
     {
-        private readonly int _gpsPort;
+        private readonly string _gpsPort;
         private readonly SerialSpeed _gpsSerialSpeed;
         private readonly int _readTimeout;
         private CancellationTokenSource _ctsGps;
         private bool _gpsRunning;
 
-        internal GpsHardware(int port, SerialSpeed serialSpeed, int timeout)
+        internal GpsHardware(string port, SerialSpeed serialSpeed, int timeout)
         {
             _gpsPort = port;
             _gpsSerialSpeed = serialSpeed;
@@ -64,7 +64,7 @@ namespace GS.Server.Gps
         {
             GpsRunning = false;
         }
-        
+
         /// <summary>
         /// Data read from the GPS 
         /// </summary>
@@ -109,7 +109,8 @@ namespace GS.Server.Gps
         {
             var _serial = new SerialPort()
             {
-                PortName = "COM" + _gpsPort,
+                PortName = _gpsPort,
+                //PortName = "COM" + _gpsPort,
                 BaudRate = (int)_gpsSerialSpeed,
                 ReadTimeout = _readTimeout * 1000,
                 StopBits = StopBits.One,
@@ -146,7 +147,7 @@ namespace GS.Server.Gps
             if (!Gga && !Rmc) return;
             if (!IsConnected) return;
             var _stopwatch = Stopwatch.StartNew();
-            while (_stopwatch.Elapsed.Milliseconds < _readTimeout * 1000)
+            while (_stopwatch.Elapsed.TotalMilliseconds < _readTimeout * 1000)
             {
                 ClearProperties();
                 HasData = false;
