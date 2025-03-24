@@ -1,4 +1,4 @@
-﻿/* Copyright(C) 2019-2022 Rob Morgan (robert.morgan.e@gmail.com)
+﻿/* Copyright(C) 2019-2025 Rob Morgan (robert.morgan.e@gmail.com)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
@@ -43,7 +43,7 @@ namespace GS.Server.GamePad
         public string BottomName => "GamePad";
         public int Uid => 3;
 
-        private SkyTelescopeVM _skyTelescopeVM;
+        private SkyTelescopeVm _skyTelescopeVM;
         private FocuserVM _focuserVM;
         private SettingsVM _settingsVM;
         private CancellationTokenSource ctsGamePad;
@@ -463,7 +463,7 @@ namespace GS.Server.GamePad
         /// <returns></returns>
         private bool SkyTelescope()
         {
-            if (_skyTelescopeVM == null) _skyTelescopeVM = SkyTelescopeVM._skyTelescopeVM;
+            if (_skyTelescopeVM == null) _skyTelescopeVM = SkyTelescopeVm.ASkyTelescopeVm;
             return _skyTelescopeVM != null;
         }
 

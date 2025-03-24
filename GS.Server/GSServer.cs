@@ -1,4 +1,4 @@
-﻿/* Copyright(C) 2019-2022 Rob Morgan (robert.morgan.e@gmail.com)
+﻿/* Copyright(C) 2019-2025 Rob Morgan (robert.morgan.e@gmail.com)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
@@ -650,12 +650,12 @@ namespace GS.Server
                             Shared.Settings.Language = "fr-FR";
                             break;
                         case @"/it":
-                        case @"/italiin":
+                        case @"/italian":
                             Shared.Settings.Language = "it-IT";
                             break;
                         default:
                             MessageBox.Show(
-                                @"Unknown argument: '" + arg.ToLower() + @"' Valid: /unprofile, /register, /unregister, /embedding, /pec, /english, /french, /german, /italiin",
+                                @"Unknown argument: '" + arg.ToLower() + @"' Valid: /unprofile, /register, /unregister, /embedding, /pec, /english, /french, /german, /italian",
                                 @"GSServer", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             break;
                     }

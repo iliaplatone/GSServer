@@ -783,6 +783,7 @@ namespace ASCOM.GS.Sky.Telescope
                 MonitorLog.LogToMonitor(monitorItem);
 
                 CheckVersionOne("GuideRateDeclination", true);
+                CheckRange(value, 0.0, 0.5, "GuideRateDeclination");
                 SkyServer.GuideRateDec = value;
             }
         }
@@ -807,6 +808,7 @@ namespace ASCOM.GS.Sky.Telescope
                 MonitorLog.LogToMonitor(monitorItem);
 
                 CheckVersionOne("GuideRateRightAscension", true);
+                CheckRange(value, 0.0, 0.5, "GuideRateRightAscension");
                 SkyServer.GuideRateRa = value;
             }
         }
@@ -868,10 +870,10 @@ namespace ASCOM.GS.Sky.Telescope
             switch (Axis)
             {
                 case TelescopeAxes.axisPrimary:
-                    SkyServer.RateMoveAxisRa = Rate;
+                    SkyServer.RateMovePrimaryAxis = Rate;
                     break;
                 case TelescopeAxes.axisSecondary:
-                    SkyServer.RateMoveAxisDec = Rate;
+                    SkyServer.RateMoveSecondaryAxis = Rate;
                     break;
                 case TelescopeAxes.axisTertiary:
                 default:
@@ -930,6 +932,18 @@ namespace ASCOM.GS.Sky.Telescope
             {
                 if (IsPulseGuiding && SkySettings.AlignmentMode == AlignmentModes.algAltAz)
                     throw new InvalidOperationException("Alt Az mode does not support dual axis pulse guiding");
+                if (!SkyServer.AsComOn) { throw new InvalidOperationException("Not accepting commands"); }
+                if (SkyServer.AtPark) { throw new ParkedException(); }
+                //if (SkyServer.IsSlewing) { throw new InvalidValueException("Pulse rejected when slewing"); }
+                //if (!SkyServer.Tracking) { throw new InvalidValueException("Pulse rejected when tracking is off"); }
+
+                var monitorItem = new MonitorEntry
+                    { Datetime = HiResDateTime.UtcNow, Device = MonitorDevice.Telescope, Category = MonitorCategory.Driver, Type = MonitorType.Data, Method = MethodBase.GetCurrentMethod()?.Name, Thread = Thread.CurrentThread.ManagedThreadId, Message = FormattableString.Invariant($"{Direction},{Duration}") };
+                MonitorLog.LogToMonitor(monitorItem);
+
+                CheckCapability(SkySettings.CanPulseGuide, "PulseGuide");
+                CheckRange(Duration, 0, 30000, "PulseGuide", "Duration");
+
                 switch (Direction)
                 {
                     case GuideDirections.guideNorth:
@@ -944,22 +958,8 @@ namespace ASCOM.GS.Sky.Telescope
                         throw new ArgumentOutOfRangeException(nameof(Direction), Direction, null);
                 }
 
-                var monitorItem = new MonitorEntry
-                { Datetime = HiResDateTime.UtcNow, Device = MonitorDevice.Telescope, Category = MonitorCategory.Driver, Type = MonitorType.Data, Method = MethodBase.GetCurrentMethod()?.Name, Thread = Thread.CurrentThread.ManagedThreadId, Message = FormattableString.Invariant($"{Direction},{Duration}") };
-                MonitorLog.LogToMonitor(monitorItem);
-
-                if (!SkyServer.AsComOn) { throw new InvalidOperationException("Not accepting commands"); }
-                if (SkyServer.AtPark) { throw new ParkedException(); }
-
-                if (SkyServer.IsSlewing) { throw new InvalidValueException("Pulse rejected when slewing"); }
-
-                if (!SkyServer.Tracking) { throw new InvalidValueException("Pulse rejected when tracking is off"); }
-
-                CheckCapability(SkySettings.CanPulseGuide, "PulseGuide");
-                CheckRange(Duration, 0, 30000, "PulseGuide", "Duration");
-
                 var startTime = HiResDateTime.UtcNow;
-                SkyServer.PulseGuide(Direction, Duration);
+                SkyServer.PulseGuide(Direction, Duration,0);
                 // If synchronous (must be for Alt Az ASCOM V3) wait out the remaining pulse guide duration here
                 if (SkySettings.AlignmentMode != AlignmentModes.algAltAz) return;
                 // Wait for pulse guiding completion

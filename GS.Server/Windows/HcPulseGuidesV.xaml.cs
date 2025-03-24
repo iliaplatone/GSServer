@@ -5,11 +5,11 @@ namespace GS.Server.Windows
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class HandControlV 
+    public partial class HcPulseGuidesV 
     {
-        public HandControlV()
+        public HcPulseGuidesV()
         {
-            DataContext = new HandControlVm(); 
+            DataContext = new HcPulseGuidesVm(); 
             InitializeComponent();
         }
 

@@ -1,4 +1,4 @@
-﻿/* Copyright(C) 2019-2022 Rob Morgan (robert.morgan.e@gmail.com)
+﻿/* Copyright(C) 2019-2025 Rob Morgan (robert.morgan.e@gmail.com)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
@@ -51,7 +51,7 @@ namespace GS.Server.Main
 
         private IPageVM _currentPageViewModel;
         private List<IPageVM> _pageViewModels;
-        private SkyTelescopeVM _skyTelescopeVM;
+        private SkyTelescopeVm _skyTelescopeVM;
         private FocuserVM _focuserVM;
         private NotesVM _notesVM;
         private SettingsVM _settingsVM;
@@ -233,7 +233,7 @@ namespace GS.Server.Main
                     {
                         if (!PageViewModels.Contains(_skyTelescopeVM))
                         {
-                            _skyTelescopeVM = new SkyTelescopeVM();
+                            _skyTelescopeVM = new SkyTelescopeVm();
                             PageViewModels.Add(_skyTelescopeVM);
                         }
                         SkyWatcherRadioVisible = true;

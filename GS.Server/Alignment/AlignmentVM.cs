@@ -1,4 +1,4 @@
-﻿/* Copyright(C) 2019-2022 Rob Morgan (robert.morgan.e@gmail.com),
+﻿/* Copyright(C) 2019-2025 Rob Morgan (robert.morgan.e@gmail.com),
     Phil Crompton (phil@unitysoftware.co.uk)
 
     This program is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ namespace GS.Server.Alignment
 
         public int Uid => 10;
 
-        private readonly SkyTelescopeVM _skyTelescopeVM;
+        private readonly SkyTelescopeVm _skyTelescopeVM;
 
         DispatcherTimer _alertTimer;
 
@@ -311,7 +311,7 @@ namespace GS.Server.Alignment
             };
             MonitorLog.LogToMonitor(monitorItem);
 
-            if (_skyTelescopeVM == null) _skyTelescopeVM = SkyTelescopeVM._skyTelescopeVM;
+            if (_skyTelescopeVM == null) _skyTelescopeVM = SkyTelescopeVm.ASkyTelescopeVm;
 
             BindingOperations.EnableCollectionSynchronization(AlignmentPoints, _alignmentPointsLock);
             SkyServer.AlignmentModel.AlignmentPoints.CollectionChanged += AlignmentPoints_CollectionChanged;
